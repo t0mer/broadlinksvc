@@ -56,6 +56,12 @@ def getDeviceName(deviceType):
     0x4EAD: "Hysen controller",
     0x2722: "S1 (SmartOne Alarm Kit)",
     0x4E4D: "Dooya DT360E (DOOYA_CURTAIN_V2)",
+    0x6026: "RM4 Pro",
+    0x6070: "RM4c Mini",
+    0x610e: "RM4 Mini",
+    0x610f: "RM4c",
+    0x62bc: "RM4 Mini",
+    0x62be: "RM4c Mini"
   }
   return name.get(deviceType, "Not Supported") 
 
