@@ -6,7 +6,6 @@ from json import dumps
 import json
 import argparse
 import broadlink
-import broadlink_cli
 from subprocess import call
 import subprocess
 
