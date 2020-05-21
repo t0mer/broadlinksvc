@@ -1,10 +1,14 @@
 import datetime
 from flask import Flask, request, make_response, render_template, url_for
+from flask import send_from_directory
 from flask_restful import Resource, Api
 from json import dumps
 import json
 import argparse
 import broadlink
+import broadlink_cli
+from subprocess import call
+import subprocess
 
 parser = argparse.ArgumentParser(fromfile_prefix_chars='@')
 parser.add_argument("--timeout", type=int, default=5, help="timeout to wait for receiving discovery responses")
@@ -61,13 +65,14 @@ def getDeviceName(deviceType):
     0x610e: "RM4 Mini",
     0x610f: "RM4c",
     0x62bc: "RM4 Mini",
-    0x62be: "RM4c Mini"
+    0x62be: "RM4c Mini",
   }
   return name.get(deviceType, "Not Supported") 
 
 @app.route('/discover')
 def discover():
   html=''
+  
   devices = broadlink.discover(timeout=6, local_ip_address=args.ip)
   for device in devices:
     if device.auth():
@@ -75,7 +80,7 @@ def discover():
        html = html + '<td class="cell100 column1 device_name">'+ getDeviceName(device.devtype) +'</td>'
        html = html + '<td class="cell100 column2 device_type">'+ format(hex(device.devtype)) +'</td>'
        html = html + '<td class="cell100 column3 device_ip ">'+ device.host[0] +'</td>'
-       html = html + '<td class="cell100 column4 device_mac">'+ ''.join(format(x, '02x') for x in device.mac[::-1]) +'</td>'
+       html = html + '<td class="cell100 column4 device_mac">'+ ''.join(format(x, '02x') for x in device.mac) +'</td>'
        html = html + '</tr>'
   return render_template('discovery.htm',content=html)
 
@@ -83,7 +88,16 @@ def discover():
 def devices():
   return render_template('devices.htm')
 
+@app.route('/generator')
+def generator():
+  return render_template('generator.html')
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('js', path)
+
+
 
 if __name__ == '__main__':
-     app.run(debug=True,host='0.0.0.0',port=7020)
+     app.run(debug=True,host='0.0.0.0',port=2233)
 
